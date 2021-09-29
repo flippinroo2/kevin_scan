@@ -4,7 +4,7 @@ Hello, it looks like you've stumbled upon my blockchain utility application. Let
 
 To run this application you should follow these steps:
 
-1. Clone this repository.
+1. Clone this repository. (*git clone git@github.com:flippinroo2/kevin_scan.git*)
 2. Run the following command: "__yarn install__" or "__npm install__". (*Depending on the package manager you use.*)
 3. Once all of the dependencies are installed, run the following command: "__yarn build__" or "__npm run build__". (*This will invoke the TypeScript compiler and then build a production version of the React app.*)
 4. Now that all of the dependencies and the source files are built, we can start up our backend server. You can start the server with the following command: "__yarn serve__" or "__npm run serve__". (*The data for this application comes from the blockchain, but the server is included here as an example.*)
