@@ -1,0 +1,26 @@
+{
+  "mainColumns": [
+    {
+      "title": "BLOCK NUMBER",
+      "dataIndex": "blockNumber",
+      "key": "blockNumber"
+    }
+  ],
+  "secondaryColumns": [
+    {
+      "title": "EVENT ID",
+      "dataIndex": "eventId",
+      "key": "eventId"
+    },
+    {
+      "title": "EVENT",
+      "dataIndex": "event",
+      "key": "event"
+    },
+    {
+      "title": "EXTRA DATA",
+      "dataIndex": "extraData",
+      "key": "extraData"
+    }
+  ]
+}
