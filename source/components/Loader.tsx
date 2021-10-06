@@ -1,21 +1,23 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Layout, Progress, Typography } from 'antd';
 
-const { Paragraph } = Typography;
+import { Props, State } from '../interfaces/master';
 
-class Loader extends Component<any, any> {
-  constructor(props: any) {
+type LoaderProps = Props;
+type LoaderState = { percentLoaded?: number };
+
+class Loader extends Component<LoaderProps, LoaderState> {
+  constructor(props: Props) {
     super(props);
-  }
-
-  static getDerivedStateFromProps(props: any) {
+    // TODO: Clean up state bindings. We can use props for most use cases.
     const { percentLoaded } = props;
-    return { percentLoaded };
+    this.state = { percentLoaded };
   }
 
   render() {
     const { percentLoaded } = this.state;
+    const { Paragraph } = Typography;
     return (
       <Layout>
         <Paragraph className="loading_text">Loading...</Paragraph>
@@ -28,9 +30,9 @@ class Loader extends Component<any, any> {
   }
 }
 
-const mapStateToProps = (state: any): any => {
-  const { percentLoaded } = state;
-  return { percentLoaded };
+const mapStateToProps = (state: State): Props => {
+  const { loadingReducers = {} } = state;
+  return { percentLoaded: loadingReducers.percentLoaded };
 };
 
 export default connect<any, any, any>(mapStateToProps)(Loader);

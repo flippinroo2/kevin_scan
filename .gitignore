@@ -1,7 +1,10 @@
 # FILES
+.DS_Store
 
 # DIRECTORIES
 blockchain/
 build/
 node_modules/
 src/
+temp/polkadotJsTest/
+temp/pancake-frontend/
