@@ -1,10 +1,9 @@
 import { Layout, Typography } from 'antd';
 
-const { Text } = Typography;
-
-const AppFooter = (props: { className: string; }) => {
+const Footer = (props: { className: string; }) => {
   const { className } = props;
   const { Footer } = Layout;
+  const { Text } = Typography;
   const year = new Date().getFullYear();
   return (
     <Footer className={className}>
@@ -13,8 +12,8 @@ const AppFooter = (props: { className: string; }) => {
   );
 };
 
-AppFooter.defaultProps = {
+Footer.defaultProps = {
   className: 'site_footer',
 };
 
-export default AppFooter;
+export default Footer;

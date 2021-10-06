@@ -42,7 +42,7 @@ export const getBlockchain = () => {
   };
 };
 
-export const setBlockchain = (payload: any) => {
+export const setBlockchain = (payload: string) => {
   return (dispatch: any) => {
     dispatch({
       type: SET_BLOCKCHAIN,
@@ -59,7 +59,7 @@ export const getEndpoint = () => {
   };
 };
 
-export const setEndpoint = (payload: any) => {
+export const setEndpoint = (payload: string) => {
   return (dispatch: any) => {
     dispatch({
       type: SET_ENDPOINT,

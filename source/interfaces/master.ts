@@ -1,47 +1,21 @@
-import { Dispatch } from "react"
+import * as Api from './api';
+import * as Loading from './loading';
+import * as Metadata from './metadata';
+import * as Polkadot from './polkadot';
+import * as Table from './table';
+import * as Web3 from './web3';
 
-// import blockchain from './blockchain';
+export * from './api';
+export * from './loading';
+export * from './metadata';
+export * from './polkadot';
+export * from './table';
+export * from './web3';
 
-export type apiProps = {
-    api: object,
-    blockchain: string,
-    endpoint: string,
-}
-export type apiState = { apiReducers: { api: object, blockchain: string, endpoint: string } }
+export type Actions = Api.apiFunctions & Loading.loadingFunctions & Metadata.metadataFunctions & Polkadot.polkadotFunctions & Table.tableFunctions & Web3.web3Functions;
 
-export type loadingProps = {
-    loading: boolean,
-    percentLoaded: boolean,
-}
-export type loadingState = { loadingReducers: { loading: boolean, percentLoaded: boolean } }
+export type Props = Api.apiProps & Loading.loadingProps & Metadata.metadataProps & Polkadot.polkadotProps & Table.tableProps & Web3.web3Props;
+export type FullProps = Props & Actions;
 
-export type polkadotProps = {
-    currency: string,
-}
-export type polkadotState = { polkadotReducers: { currency: string } }
-
-export type tableProps = {
-    columns: {}[],
-    rows: {}[],
-}
-export type tableState = { tableReducers: { columns: {}[], rows: {}[] } }
-
-export type BaseProps = apiProps & loadingProps & polkadotProps & tableProps;
-
-export type InitialState = apiState & loadingState & polkadotState & tableState;
-export type FullState = BaseProps;
-
-export interface ActionProps {
-    setApi: any;
-    // setApi: (data: string) => void;
-    // setApi: (data: string) => Promise<void>;
-    // setApi: (data: string) => (dispatch: any) => Promise<void>;
-    setLoaded: () => void;
-    setPercentLoaded: (data: number) => void;
-}
-
-export type ActionState = {
-    setApi: Dispatch<any>;
-    setLoaded: Dispatch<any>;
-    setPercentLoaded: Dispatch<any>;
-}
+export type State = Api.apiState & Loading.loadingState & Metadata.metadataState & Polkadot.polkadotState & Table.tableState & Web3.web3State;
+export type FullState = Api.apiState & Loading.loadingState & Metadata.metadataState & Polkadot.polkadotState & Table.tableState & Web3.web3State & Actions;

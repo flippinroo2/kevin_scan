@@ -1,4 +1,4 @@
-import React, { Component, Ref } from 'react';
+import React, { Component, Dispatch, Ref } from 'react';
 import { connect } from 'react-redux';
 
 import { tableActions, loadingActions } from '../state/actions';
@@ -33,47 +33,91 @@ enum Blockchains {
   Polkadot = 'wss://rpc.polkadot.io',
 }
 
-class DataInput extends Component<any, any> {
-  inputForm: Ref<FormInstance<any>>;
-  // testForm: Ref<FormInstance<any>>;
-  // inputForm: Ref<FormInstance<any>> = React.createRef();
+import { Props, State } from '../interfaces/master';
 
-  constructor(props: any) {
+interface DispatchToProps {
+  addColumns: Dispatch<any>
+  addRow: Dispatch<any>
+  addRows: Dispatch<any>
+  clearTable: Dispatch<void>
+  setColumns: Dispatch<any>
+  setLoaded: Dispatch<void>
+  setLoading: Dispatch<void>
+  setPercentLoaded: Dispatch<number>
+};
+type FormProps = Props & DispatchToProps;
+type FormState = {
+  api?: {
+    derive?: {
+      chain?: {}
+    },
+    query?: {
+      system?: {
+        events?: {
+          at: (hash: number[]) => {}
+        }
+      },
+      timestamp?: {
+        now: () => { words: string }
+      }
+    },
+    rpc?: {
+      chain?: {
+        getBlock: (hash: number[]) => {},
+        // parseInt(blockData.block.header.number.toString());
+        getBlockHash: (blockNumber: number) => number[]
+        getHeader: (hash: number[]) => { author?: string },
+      }
+    },
+    type?: string
+  },
+  block?: {},
+  blockchain?: string,
+  endBlock?: number,
+  endpoint?: string,
+  genesisBlock?: number,
+  lastBlock?: number,
+  lastFinalizedBlock?: number,
+  loading?: boolean,
+  percentLoaded?: number,
+  startBlock?: number,
+  subscribe?: boolean,
+};
+
+class DataInput extends Component<FormProps, FormState> {
+  inputForm: Ref<FormInstance<any>>;
+
+  constructor(props: FormProps) {
     super(props);
-    const inputForm: Ref<FormInstance<any>> = React.createRef();
-    // const testForm = Form.create();
-    this.inputForm = inputForm;
-    // this.testForm = testForm;
+    this.inputForm = React.createRef();
+    // TODO: Clean up state bindings. We can use props for most use cases.
+    const {
+      api,
+      block,
+      blockchain,
+      endpoint,
+      loading,
+      percentLoaded,
+    } = props;
+    this.state = {
+      api,
+      blockchain,
+      endBlock: block?.endBlock,
+      endpoint,
+      genesisBlock: block?.genesisBlock,
+      lastBlock: block?.lastBlock,
+      lastFinalizedBlock: block?.lastFinalizedBlock,
+      loading,
+      percentLoaded,
+      startBlock: block?.startBlock,
+    };
     this.clickListener = this.clickListener.bind(this);
     this.subscribeToBlocks = this.subscribeToBlocks.bind(this);
     this.unsubscribeToBlocks = this.unsubscribeToBlocks.bind(this);
   }
 
-  static getDerivedStateFromProps(props: any) {
-    const {
-      api,
-      blockchain,
-      endBlock,
-      endpoint,
-      genesisBlock,
-      lastBlock,
-      lastFinalizedBlock,
-      loading,
-      percentLoaded,
-      startBlock,
-    } = props;
-    return {
-      api,
-      blockchain,
-      endBlock,
-      endpoint,
-      genesisBlock,
-      lastBlock,
-      lastFinalizedBlock,
-      loading,
-      percentLoaded,
-      startBlock,
-    };
+  componentDidMount() {
+    this.props.setPercentLoaded(75);
   }
 
   async dropdownListener(event: any) {
@@ -85,12 +129,13 @@ class DataInput extends Component<any, any> {
     this.props.setLoading();
     const clear = await this.props.clearTable();
     const { api } = this.state;
-    if (api.type) {
+    if (api?.type) {
       const test = await this.buildTableObjects();
     }
   }
 
   async buildTableObjects() {
+    const { api } = this.state;
     let columns = [];
 
     const inputForm: any = this.inputForm;
@@ -103,9 +148,9 @@ class DataInput extends Component<any, any> {
     // const percentTicker = 100 / blockDifference;
 
     for (let i = 0; i <= blockDifference; i++) {
-      const blockHash = await this.getHashFromNumber(startBlock + i);
+      const blockHash = await api?.rpc?.chain?.getBlockHash(startBlock + i)!;
 
-      const blockEvents = await this.getEventsFromHash(blockHash);
+      const blockEvents = await api?.query?.system?.events?.at(blockHash);
       const formattedEvents = await this.parseEventData(blockEvents);
 
       formattedEvents.forEach((item, index) => {
@@ -138,82 +183,30 @@ class DataInput extends Component<any, any> {
   }
 
   async getBlockData(blockNumber: number) {
-    const hash = await this.getHashFromNumber(blockNumber);
-    const { block } = await this.getBlockFromHash(hash);
-    const events = await this.getEventsFromHash(hash);
-    const time = await this.getTimeFromHash(hash);
-    return {
-      block,
-      hash,
-      events,
-      time,
-    };
-  }
-
-  async getBlockFromHash(hash: any) {
     const { api } = this.state;
-    if (api.type) {
-      const { rpc } = api;
-      const { chain } = rpc;
-      const blockData = await chain.getBlock(hash);
-      const test = blockData.block.extrincs;
-      return blockData;
+    if (api?.type) {
+      const hash = await api?.rpc?.chain?.getBlockHash(blockNumber)!;
+      const block = await api?.rpc?.chain?.getBlock(hash);
+      // const block = blockData.block.extrincs;
+      const events = await api?.query?.system?.events?.at(hash);
+      const time = await this.getTimeFromHash(hash);
+      return {
+        block,
+        hash,
+        events,
+        time,
+      };
     }
-    return 0;
-  }
-
-  async getBlockHeaderFromHash(hash: any) {
-    const { api } = this.state;
-    if (api.type) {
-      const { rpc } = api;
-      const { chain } = rpc;
-      const blockData = await chain.getHeader(hash);
-      return blockData;
-    }
-    return 0;
-  }
-
-  async getBlockNumberFromHash(hash: any) {
-    const { api } = this.state;
-    if (api.type) {
-      const { rpc } = api;
-      const { chain } = rpc;
-      const blockData = await chain.getBlock(hash);
-      return parseInt(blockData.block.header.number.toString());
-    }
-    return 0;
-  }
-
-  async getHashFromNumber(number: number) {
-    const { api } = this.state;
-    if (api.type) {
-      const { rpc } = api;
-      const { chain } = rpc;
-      const blockHash = await chain.getBlockHash(number);
-      return blockHash;
-    }
-    return 0;
-  }
-
-  async getEventsFromHash(hash: any) {
-    const { api } = this.state;
-    if (api.type) {
-      const { query } = api;
-      const { system } = query;
-      const { events } = system;
-      const event = await events.at(hash);
-      return event;
-    }
-    return {};
   }
 
   async parseEventData(events: any) {
+    const { api } = this.state;
     const eventData = [];
     const hash = events.createdAtHash;
-    const blockHeader = await this.getBlockHeaderFromHash(hash);
-    const blockNumber = await this.getBlockNumberFromHash(hash);
+    const blockHeader = await api?.rpc?.chain?.getHeader(hash);
+    const blockNumber = await api?.rpc?.chain?.getBlock(hash);
     const blockTime = await this.getTimeFromHash(hash);
-    const eventObject: { blockNumber: number, events: {}[] } = {
+    const eventObject: { blockNumber?: {}, events: {}[] } = {
       blockNumber,
       events: [],
     };
@@ -224,7 +217,7 @@ class DataInput extends Component<any, any> {
       const metadata = data.meta;
       const { args, docs, isEmpty, name, registry, Type } = meta;
       const [eventId] = phase.asApplyExtrinsic.words;
-      const author = await blockHeader.author;
+      const author = await blockHeader?.author;
       eventObject.events.push({
         // author,
         // timestamp: blockTime.toISOString(),
@@ -241,16 +234,16 @@ class DataInput extends Component<any, any> {
     // TODO: Get timestamps working properly. (I believe it has to do with the data returned from api.query.timestamp being the current time, not the block / event time.)
     let temp;
     const { api, lastBlock, lastFinalizedBlock } = this.state;
-    if (api.type) {
-      const deriveChain = api.derive.chain;
-      const rpcChain = api.rpc.chain;
+    if (api?.type) {
+      const deriveChain = api.derive?.chain;
+      const rpcChain = api.rpc?.chain;
 
-      const { block } = await rpcChain.getBlock(hash);
+      const block = await rpcChain?.getBlock(hash);
 
-      const timestamp = api.query.timestamp;
-      const blockchainTimestamp = await timestamp.now();
+      const timestamp = api.query?.timestamp;
+      const blockchainTimestamp: any = await timestamp?.now()!;
 
-      const [parsedBlockchainTimestamp] = blockchainTimestamp.words;
+      const [parsedBlockchainTimestamp]: any = blockchainTimestamp.words;
       const blockchainTime = new Date(parsedBlockchainTimestamp);
 
       const currentTime: any = new Date();
@@ -271,18 +264,17 @@ class DataInput extends Component<any, any> {
   }
 
   async subscribeToBlocks() {
-    const { api } = this.state;
-    const { derive, rpc } = api;
-    const block = await rpc.chain.getBlock();
-    const header = block.block.header;
-    derive.chain.subscribeNewHeads((header: any) => {
-      const { subscribe } = this.state;
-      if (subscribe) {
-        console.log(
-          `Block Number#${header.number}\tBlock Author: ${header.author}`,
-        );
-      }
-    });
+    // const { api } = this.state;
+    // const block = await api?.rpc?.chain?.getBlock();
+    // const header = block.block.header;
+    // api?.derive?.chain?.subscribeNewHeads((header: any) => {
+    //   const { subscribe } = this.state;
+    //   if (subscribe) {
+    //     console.log(
+    //       `Block Number#${header.number}\tBlock Author: ${header.author}`,
+    //     );
+    //   }
+    // });
   }
 
   unsubscribeToBlocks() {
@@ -367,8 +359,9 @@ class DataInput extends Component<any, any> {
   );
 
   render() {
-    const { endBlock, endpoint, lastBlock, loading, startBlock } =
+    const { endBlock, endpoint, lastBlock, startBlock } =
       this.state; // TODO: Add a state for Subscribe that'll be used to stream new data from blockchain.
+    const { loading } = this.props;
 
     const blockchainSelection = "Polkadot";
 
@@ -404,15 +397,15 @@ class DataInput extends Component<any, any> {
         {/* <ConfigProvider {...dividerProps}>
           <Divider>Blockchain Info</Divider>
         </ConfigProvider> */}
-        <Row align="middle" justify="center" {...rowProps}>
-          <Col {...columnProps} xs={7} sm={6} md={5}>
+        <Row className="blockchain_info" align="middle" justify="center" {...rowProps}>
+          <Col className="blockchain_info__blockchain" {...columnProps} xs={7} sm={6} md={5}>
             <Dropdown overlay={this.menu}>
               <Button>
                 {blockchainSelection} <CaretDownOutlined />
               </Button>
             </Dropdown>
           </Col>
-          <Col {...columnProps} xs={17} sm={18} md={19}>
+          <Col className="blockchain_info__endpoint" {...columnProps} xs={17} sm={18} md={19}>
             <Form.Item
               label="Endpoint"
               name="endpoint"
@@ -430,8 +423,8 @@ class DataInput extends Component<any, any> {
           </Col>
         </Row>
         <Divider orientation="left">Blocks</Divider>
-        <Row align="middle" justify="center" {...rowProps}>
-          <Col {...columnProps} xs={11} sm={24}>
+        <Row className="block_info" align="middle" justify="center" {...rowProps}>
+          <Col className="block_info__startBlock" {...columnProps} xs={11} sm={24}>
             <Form.Item
               label="Start Block"
               name="startBlock"
@@ -475,6 +468,7 @@ class DataInput extends Component<any, any> {
             </Form.Item>
           </Col>
           <Col
+            className="block_info__endBlockß"
             {...columnProps}
             xs={{ offset: 2, span: 11 }}
             sm={{ offset: 0, span: 24 }}>
@@ -541,26 +535,18 @@ class DataInput extends Component<any, any> {
   }
 }
 
-const mapStateToProps = (state: any) => {
-  const { apiReducers, loadingReducers, polkadotReducers } = state;
-  const { api, blockchain, endpoint } = apiReducers;
-  const { loading, percentLoaded } = loadingReducers
-  const { block } = polkadotReducers;
+const mapStateToProps = (state: State): Props => {
+  const { apiReducers = {}, loadingReducers = {} } = state;
   return {
-    api,
-    blockchain,
-    endBlock: block.endBlock,
-    endpoint,
-    genesisBlock: block.genesisBlock,
-    lastBlock: block.lastBlock,
-    lastFinalizedBlock: block.lastFinalizedBlock,
-    loading,
-    percentLoaded,
-    startBlock: block.startBlock,
+    api: apiReducers.api,
+    blockchain: apiReducers.blockchain,
+    endpoint: apiReducers.endpoint,
+    loading: loadingReducers.loading,
+    percentLoaded: loadingReducers.percentLoaded,
   };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>): DispatchToProps => {
   return {
     addColumns: (data: any) => {
       dispatch(addColumns(data));

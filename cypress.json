@@ -1,3 +1,10 @@
 {
-  "defaultCommandTimeout": 10000
+  "defaultCommandTimeout": 10000,
+  "fileServerFolder": "./source",
+  "integrationFolder": "./source/testing/integration",
+  "fixturesFolder": "./source/testing/fixtures",
+  "screenshotsFolder": "./source/testing/screenshots",
+  "supportFile": "./source/testing/support",
+  "downloadsFolder": "./source/testing/downloads",
+  "pluginsFile": false
 }

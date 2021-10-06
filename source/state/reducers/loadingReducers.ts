@@ -3,7 +3,7 @@ import { loadingActions } from '../actions';
 const { GET_PERCENT_LOADED, LOADING, SET_PERCENT_LOADED } =
   loadingActions.ACTION_TYPES;
 
-const loading = (state: boolean = true, action: any) => {
+const loading = (state: boolean = true, action: { type: string, payload: boolean }) => {
   switch (action.type) {
     case LOADING:
       return action.payload;
@@ -12,7 +12,7 @@ const loading = (state: boolean = true, action: any) => {
   }
 };
 
-const percentLoaded = (state: number = 25, action: any) => {
+const percentLoaded = (state: number = 25, action: { type: string, payload: number }) => {
   switch (action.type) {
     case SET_PERCENT_LOADED:
       return action.payload;

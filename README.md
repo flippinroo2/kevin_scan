@@ -1,6 +1,6 @@
-# KEVIN SCAN
+# KEVINS DAPP
 
-Hello, it looks like you've stumbled upon my blockchain utility application. Let me show you around!
+Hello, it looks like you've stumbled upon my decentralized application. Let me show you around!
 
 To run this application you should follow these steps:
 
@@ -19,7 +19,7 @@ There is a backend server included in this repository that can be started with t
 
 When you navigate to this url you will be prompted for a username & password. (*You can find these in the ".env" file. I know it's not convention to have environment variables public, however, this is strictly used as an example.*)
 
-## BLOCK VIEWER
+## Kevin Scan
 
 The first portion of the application is a block viewer. You simply enter into the form fields the range of blocks you would like to fetch data from.
 
@@ -27,22 +27,37 @@ The first portion of the application is a block viewer. You simply enter into th
 + __Start Block__: Enter an integer greater or equal to "1". (*The value must be lower than the value entered into "End Block"*)
 + __End Block__: Enter an integer greater or equal to "2". (*The value must be greater than the value entered into "Start Block"*)
 
+## Loy Swap
+
+The
+
++
+
+## Kevin View
+
+The
+
++
+
+## Kevin Test
+
+The
+
++
+
 ## TODO - PHASE 1
 
-1. Finish up full test suite. (*First priority because it'll save time with development later.*)
-2. Fix type declarations. Would like to get to a place without the usage of "any" types. (*Start with finishing up the Redux props / state declarations.*)
-3. Comment TypeScript files and document different parts of the application.
-4. Fix everything in the "issues" queue.
-5. Redo the table columns so that there is only 1 header row. (*This will allow for more efficient sorting / filtering.*)
-6. Setup SASS for styles. (*Is going down the WebPack rabbit hole worth it, or is there a way around this? Look into CSS modules and the native TypeScript "<u>tsc</u>" compiler.*)
+1. Get Web3 functionality working.
+2. Get Swapping page finished.
+3. Finish up full test suite. (*First priority because it'll save time with development later.*)
+4. Fix type declarations. Would like to get to a place without the usage of "any" types. (*Start with finishing up the Redux props / state declarations.*)
+5. Comment TypeScript files and document different parts of the application.
+6. Fix everything in the "issues" queue.
 
 # TODO - PHASE 2
 
-1. Integrate Web3 wallet provider.
-2. Get the blockchain switcher dropdown working properly & implement functionality for fetching data from other chains.
-3. Create more pages:
-    1. NFT Viewer
-    2. Token Swapper
+1. Get the blockchain switcher dropdown working properly & implement functionality for fetching data from other chains.
+2. Redo the table columns so that there is only 1 header row. (*This will allow for more efficient sorting / filtering.*)
 
 # ISSUES
 

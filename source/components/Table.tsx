@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component, Dispatch } from 'react';
 import { connect } from 'react-redux';
 
 import { Table } from 'antd';
@@ -6,26 +6,34 @@ import { AppstoreFilled, PlusSquareFilled } from '@ant-design/icons';
 
 import { loadingActions } from '../state/actions';
 
-// import { isOfType, checkTypeGuard, instanceCheck, typeCheck, debug } from '../helpers/debug';
-
 const { setLoaded, setLoading, setPercentLoaded } = loadingActions;
 
-class DataDisplay extends Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.populateTable = this.populateTable.bind(this);
-    this.populateEventFilter = this.populateEventFilter.bind(this);
-  }
+import { Props, State } from '../interfaces/master';
 
-  static getDerivedStateFromProps(props: any) {
-    const { api, loading, percentLoaded, columns, rows } = props;
-    return {
+interface DispatchToProps { setLoaded: Dispatch<void>, setLoading: Dispatch<void>; setPercentLoaded: Dispatch<number> };
+type TableProps = Props & DispatchToProps;
+type TableState = { api?: {}, columns?: object[], loading?: boolean, percentLoaded?: number, rows?: object[] };
+
+class DataDisplay extends Component<TableProps, TableState> {
+  constructor(props: TableProps) {
+    super(props);
+    // TODO: Clean up state bindings. We can use props for most use cases.
+    const {
       api,
-      columns: columns.columns,
+      columns,
       loading,
       percentLoaded,
-      rows: rows.rows,
-    };
+      rows,
+    } = props;
+    this.state = {
+      api,
+      columns,
+      loading,
+      percentLoaded,
+      rows,
+    }
+    this.populateTable = this.populateTable.bind(this);
+    this.populateEventFilter = this.populateEventFilter.bind(this);
   }
 
   componentDidMount() {
@@ -53,7 +61,7 @@ class DataDisplay extends Component<any, any> {
   };
 
   populateTable() {
-    const { loading, percentLoaded, rows } = this.state;
+    const { loading, rows } = this.props;
     // TODO: Dynamic column creation
     const mainColumns = [
       {
@@ -98,7 +106,7 @@ class DataDisplay extends Component<any, any> {
         dataSource={rows}
         expandable={{
           childrenColumnName: 'children',
-          expandedRowRender: (record, index) => {
+          expandedRowRender: (record: any, index) => {
             return (
               <Table
                 key={index}
@@ -136,18 +144,18 @@ class DataDisplay extends Component<any, any> {
   }
 }
 
-const mapStateToProps = (state: any) => {
-  const { apiReducers, loadingReducers, tableReducers, polkadotReducers } = state;
+const mapStateToProps = (state: State): Props => {
+  const { apiReducers = {}, loadingReducers = {}, tableReducers = {} } = state;
   return {
     api: apiReducers.api,
     columns: tableReducers.columns,
     loading: loadingReducers.loading,
-    loadingPercent: loadingReducers.loadingPercent,
+    percentLoaded: loadingReducers.percentLoaded,
     rows: tableReducers.rows,
   };
 };
 
-const mapDispatchToProps = (dispatch: any): any => {
+const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>): DispatchToProps => {
   return {
     setLoaded: () => {
       dispatch(setLoaded());
@@ -155,7 +163,7 @@ const mapDispatchToProps = (dispatch: any): any => {
     setLoading: () => {
       dispatch(setLoading());
     },
-    setPercentLoaded: (data: any) => {
+    setPercentLoaded: (data: number) => {
       dispatch(setPercentLoaded(data));
     },
   };
