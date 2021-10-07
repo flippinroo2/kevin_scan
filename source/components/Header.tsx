@@ -1,25 +1,13 @@
-import { Dispatch, useEffect } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Props } from '../interfaces/master';
-import { metadataActions, web3Actions } from '../state/actions';
+import { useMoralis, useMoralisCloudFunction, useMoralisWeb3Api, useMoralisWeb3ApiCall } from "react-moralis";
 import { Button, Layout, PageHeader, Typography } from 'antd';
 import {
   BarsOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
-
-var moralis: any;
-
-const connectWeb3 = (event: any) => {
-  console.log("connectWeb3");
-  const test = moralis.authenticate();
-  console.log(test);
-  // const { auth, authenticate, enableWeb3, isAuthenticated, isAuthenticating, isWeb3Enabled, isWeb3EnableLoading, login, logout, Moralis, signup, user, web3, web3EnableError } = useMoralis();
-  // const moralis: any = Moralis; // Did this to avoid error with the "Plugins" directive. (ALSO, plugins may not be enabled on the older version I'm using >.<)
-  // const moralisWeb3 = useMoralisWeb3Api();
-  // const moralisWeb3Call = useMoralisWeb3ApiCall(); // Handles the async part of the web3 functions.
-}
 
 const menuToggle = (event: any) => {
   const { currentTarget } = event;
@@ -33,7 +21,7 @@ type HeaderProps = Props & { className: string; }
 const Header = (props: HeaderProps) => {
   const state: any = useSelector((state) => { return state; });
 
-  moralis = state.web3Reducers.moralis;
+  const moralis = state.web3Reducers.moralis;
   const title = state.metadataReducers.title;
 
   const { className } = props;
@@ -41,13 +29,65 @@ const Header = (props: HeaderProps) => {
   const { Header } = Layout;
   const { Title } = Typography;
 
-  useEffect(() => {
+  const { auth, authenticate, enableWeb3, isAuthenticated, isAuthenticating, isWeb3Enabled, isWeb3EnableLoading, login, logout, Moralis, signup, user, web3, web3EnableError } = useMoralis();
 
-  }); // This is called each time the component is rendered.
+  useEffect(() => { });
 
+  const connectWeb3 = async () => {
+    // const moralis: any = Moralis; // Did this to avoid error with the "Plugins" directive. (ALSO, plugins may not be enabled on the older version I'm using >.<)
+    const moralisWeb3 = useMoralisWeb3Api();
+    try {
+      const web3Enabled = await enableWeb3();
+      const web3Installed = await moralis.ensureWeb3IsInstalled();
+      if (web3Installed) {
+        console.log("BREAK");
+        const test1 = await moralis.enable();
+        const test2 = await moralis.getWeb3Provider();
+        const test3 = await moralis.authenticate();
+        console.log("BREAK");
+      }
+      var err: any;
+      var errorCode: number;
+      switch (auth.state) {
+        case "error":
+          // TODO: Consider throwing an error here and doing a switch statement in the "catch" block below for the different error codes.
+          err = auth.error;
+          errorCode = err.code;
+          console.dir(err);
+          if (errorCode == 101) {
+            console.log("Invalid Username / Password");
+            signup("testUsername", "testPassword", "test@email.com");
+            break;
+          }
+          if (errorCode = 202) {
+            console.log("This username is taken");
+            break;
+          }
+        case "authenticating":
+          console.log("authenticating");
+          break;
+        case "authenticated":
+          break;
+        case "logging_out":
+          console.log("logging_out");
+          break;
+        case "unauthenticated":
+          // const authenticationStatus = authenticate({ onComplete: () => { alert("Authenticated"); }, provider: "walletconnect" }); // Requires Metamask or another Web3 Provider. You can also pass in "walletconnect" to the "provider" argument to use that instead of Metamask.
+          const loginTest = login("testUsername", "testPassword");
+          // const signUpTest = signup("testUsername", "testPassword", "test@email.com");
+          break;
+        default:
+          err = auth.error;
+          console.log("default");
+      }
+    } catch (err: any) {
+      alert(err.message);
+    }
+    console.log("BREAK");
+  }
 
   return (
-    <Header className={className}>
+    <PageHeader className={className}>
       <BarsOutlined className="site_header__menu-toggle" onClick={menuToggle} />
       {/* <Image
         className="site_header__logo"
@@ -58,7 +98,7 @@ const Header = (props: HeaderProps) => {
       /> */}
       <Title code className="site_header__title">{title}</Title>
       <Button type="primary" className="site_header__connect" onClick={connectWeb3}>Connect</Button>
-    </Header>
+    </PageHeader>
   );
 };
 

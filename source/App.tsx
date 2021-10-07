@@ -17,10 +17,10 @@ import { BlockScanner, ContractUtilities, NftViewer, Swap, Temp } from './pages'
 import { Footer, Header, Loader, Navigation } from './components';
 
 const { setApi } = apiActions;
-const { setLoaded, setPercentLoaded } = loadingActions;
+const { setLoaded } = loadingActions;
 const { getMoralis, setMoralis } = web3Actions;
 
-interface DispatchToProps { setApi: Dispatch<any>; setLoaded: Dispatch<any>; getMoralis: any; setMoralis: any; setPercentLoaded: Dispatch<any> };
+interface DispatchToProps { setApi: Dispatch<any>; setLoaded: any; getMoralis: any; setMoralis: any; };
 type AppProps = Props & DispatchToProps;
 type AppState = { api?: {}, blockchain?: string, color?: string, currency?: string, endpoint?: string, loading?: boolean, moralis?: {}, percentLoaded?: number };
 
@@ -35,11 +35,11 @@ class App extends Component<AppProps, AppState> {
   componentDidMount() {
     this.props.setApi(this.state.endpoint);
     this.props.setMoralis();
-    this.props.setPercentLoaded(50);
+    this.props.setLoaded();
   }
 
   render() {
-    const { percentLoaded } = this.props;
+    const { loading } = this.props;
     const { Content, Sider } = Layout;
     const siteLayout = { minHeight: '100vh' };
     // TODO: Add all the variables below to Redux store.
@@ -58,7 +58,7 @@ class App extends Component<AppProps, AppState> {
               </Sider>
             ) : null}
             <Content>
-              {percentLoaded! < 50 ? (
+              {loading ? (
                 <Loader />
               ) : (
                 <Switch>
@@ -71,13 +71,13 @@ class App extends Component<AppProps, AppState> {
                   <Route path="/loy_swap" exact>
                     <Swap />
                   </ Route>
-                  <Route path="/kevin_view" exact>
+                  <Route path="/non_fungible_kevin" exact>
                     {/* <NftViewer /> */}
-                    <Temp title="Kevin View" />
+                    <Temp title="Non Fungible Kevin" />
                   </ Route>
-                  <Route path="/kevin_test" exact>
+                  <Route path="/kevs_contracts" exact>
                     {/* <ContractUtilities /> */}
-                    <Temp title="Kevin Test" />
+                    <Temp title="Kev's Contracts" />
                   </ Route>
                 </Switch>
               )}
@@ -116,9 +116,6 @@ const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>)
     },
     setMoralis: () => {
       dispatch(setMoralis());
-    },
-    setPercentLoaded: (data: number) => {
-      dispatch(setPercentLoaded(data));
     },
   };
 };

@@ -38,11 +38,11 @@ const Navigation = (props: { className: string; }) => {
         <Menu.Item key="loySwap" icon={<ThunderboltTwoTone twoToneColor={color} />} title="Loy Swap">
           <NavLink to={'/loy_swap'}>Loy Swap</NavLink>
         </Menu.Item>
-        <Menu.Item key="kevinView" icon={<IdcardTwoTone twoToneColor={color} />} title="Kevin View">
-          <NavLink to={'/kevin_view'}>Kevin View</NavLink>
+        <Menu.Item key="nonFungibleKevin" icon={<IdcardTwoTone twoToneColor={color} />} title="Non Fungible Kevin">
+          <NavLink to={'/non_fungible_kevin'}>Non Fungible Kevin</NavLink>
         </Menu.Item>
-        <Menu.Item key="kevinTest" icon={<ControlTwoTone twoToneColor={color} />} title="Kevin Test">
-          <NavLink to={'/kevin_test'}>Kevin Test</NavLink>
+        <Menu.Item key="kevsContracts" icon={<ControlTwoTone twoToneColor={color} />} title="Kev's Contracts">
+          <NavLink to={'/kevs_contracts'}>Kev's Contracts</NavLink>
         </Menu.Item>
       </Menu>
     </>

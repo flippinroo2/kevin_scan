@@ -1,7 +1,7 @@
-import { Dispatch, useEffect } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Props } from '../interfaces/master';
-import { metadataActions } from '../state/actions';
+import { loadingActions, metadataActions, swapActions } from '../state/actions';
 import { useMoralis, useMoralisCloudFunction, useMoralisWeb3Api, useMoralisWeb3ApiCall } from "react-moralis";
 import { Button, Image, Input, Skeleton, Statistic, Card, Row, Col, Table, Typography } from 'antd';
 import {
@@ -14,14 +14,24 @@ import {
 } from '@ant-design/icons';
 import { SwapInput } from '../components';
 
+const { setLoading, setLoaded } = loadingActions;
 const { getSiteColor, setSiteTitle } = metadataActions;
-
-const settingsClick = () => { console.log("settingsClick()"); }
-const timeClick = () => { console.log("timeClick()"); }
+const { getFromToken, getToToken, setTokens } = swapActions;
 
 var color;
 
 const SwapConfiguration = () => {
+    const { logout, user } = useMoralis();
+
+    const settingsClick = () => {
+        console.log("settingsClick()");
+        console.log(user);
+    }
+    const timeClick = () => {
+        console.log("timeClick()");
+        logout();
+    }
+
     return (
         <div className="swap_content__configuration">
             <Button className="swap_content__settings" icon={<SettingTwoTone twoToneColor="#0fd9e9" />} onClick={settingsClick} />
@@ -30,64 +40,92 @@ const SwapConfiguration = () => {
     );
 }
 
-interface DispatchToProps { getSiteColor: any; setSiteTitle: Dispatch<any>; };
+interface DispatchToProps { getFromToken: any; getSiteColor: any; getToToken: any; setLoading: any; setLoaded: any; setSiteTitle: Dispatch<any>; setTokens: Dispatch<any>; };
 type SwapProps = Props & DispatchToProps;
 
 const Swap = (props: SwapProps) => {
-    const { auth, authenticate, enableWeb3, isAuthenticated, isAuthenticating, isWeb3Enabled, isWeb3EnableLoading, login, logout, Moralis, signup, user, web3, web3EnableError } = useMoralis();
+    const { auth, authenticate, enableWeb3, isAuthenticated, isAuthenticating, isWeb3Enabled, isWeb3EnableLoading, Moralis, user, web3, web3EnableError } = useMoralis();
     const moralis: any = Moralis; // Did this to avoid error with the "Plugins" directive. (ALSO, plugins may not be enabled on the older version I'm using >.<)
     const moralisWeb3 = useMoralisWeb3Api();
+    var dex: any;
+    const network = "polygon";
     // const moralisWeb3Call = useMoralisWeb3ApiCall(); // Handles the async part of the web3 functions.
+    const actionText = isAuthenticated ? "Swap" : "Connect";
     const { Search } = Input;
     const { Paragraph, Title, Text } = Typography;
     const columnProps = {};
     // const authenticationStatus = authenticate();
 
-
-    // console.log(moralis.Plugins.web3api.token.getAllTokenIds());
-    // const { data } = useMoralisWeb3ApiCall(moralisWeb3.token.getAllTokenIds);
-
     useEffect(() => {
         props.setSiteTitle("Kevin Swap");
+        // props.setLoading();
         color = props.getSiteColor();
-        // console.log(data);
-        console.log("BREAK");
-    }); // This is called each time the component is rendered.
+        try {
+            (initalizeDex)();
+            console.log("DEX Initialized");
+        } catch (err) {
+            alert(err);
+        }
+    }, []);
 
-    var err: any; // TODO: Fix "any" type. Code wasn't on type Error.
-    var errorCode: number;
-    switch (auth.state) {
-        case "error":
-            err = auth.error;
-            errorCode = err.code;
-            console.dir(err);
-            if (errorCode == 101) {
-                console.log("Invalid Username / Password");
-                signup("testUsername", "testPassword", "test@email.com");
-                break;
-            }
-            if (errorCode = 202) {
-                console.log("This username is taken");
-                break;
-            }
-        case "authenticating":
-            console.log("authenticating");
-            break;
-        case "authenticated":
-            console.log("authenticated");
-            break;
-        case "logging_out":
-            console.log("logging_out");
-            break;
-        case "unauthenticated":
-            console.log("unauthenticated");
-            // const authenticationStatus = authenticate({ onComplete: () => { alert("Authenticated"); }, provider: "walletconnect" }); // Requires Metamask or another Web3 Provider. You can also pass in "walletconnect" to the "provider" argument to use that instead of Metamask.
-            const loginTest = login("testUsername", "testPassword");
-            // const signUpTest = signup("testUsername", "testPassword", "test@email.com");
-            break;
-        default:
-            err = auth.error;
-            console.log("default");
+    const initalizeDex = async () => {
+        await moralis.initPlugins();
+        dex = await moralis.Plugins.oneInch;
+        await getAvailableTokens(network);
+    }
+
+    const getAvailableTokens = async (blockchain: string) => {
+        let tokenArray: {}[] = [];
+        let NATIVE_ADDRESS; // The first token in the "Object.values" array is also the native token for the specified blockchain.
+        const USDC_ADDRESS = "0x2791bca1f2de4661ed88a30c99a7a9449aa84174";
+        const supportedTokens = await dex.getSupportedTokens({ chain: blockchain });
+        // const optimisimTokens = await oneInch.getSupportedTokens({ chain: "optimism" }); // They will most likely add support for this later.
+        for (const entry of Object.entries(supportedTokens.tokens)) {
+            const [address, tokenData]: [string, any] = entry;
+            const { decimals, logoURI, name, symbol } = tokenData;
+            const price = await dex.quote({
+                chain: "polygon",
+                fromTokenAddress: USDC_ADDRESS,
+                toTokenAddress: address,
+                amount: 1,
+            });
+            tokenArray.push({
+                name,
+                symbol,
+                decimals,
+                image: logoURI,
+                price: price.toTokenAmount,
+            });
+            // console.log(`${name}:${symbol} has ${decimals} decimals.`);
+        }
+        props.setTokens(tokenArray);
+        console.log("Tokens Loaded");
+    }
+
+    const swapTokens = (blockchain: string) => {
+        const NATIVE_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+        const ONEINCH_ADDRESS = "0x111111111117dc0aa78b770fa6a738034120c302";
+        const USDC_ADDRESS = "0x2791bca1f2de4661ed88a30c99a7a9449aa84174";
+        const FROM_TOKEN = props.getFromToken();
+        const TO_TOKEN = props.getToToken();
+        const options = {
+            chain: blockchain,
+            fromTokenAddress: NATIVE_ADDRESS,
+            toTokenAddress: ONEINCH_ADDRESS,
+            amount: Number(moralis.Units.ETH("0.01")),
+            fromAddress: moralis.User.current().get("ethAddress"),
+            slippage: 1,
+        };
+
+        // const receipt = await oneInch.swap(options);
+    }
+
+    const swapButtonAction = async () => {
+        if (isAuthenticated) {
+            await swapTokens(network);
+            return null;
+        }
+        await authenticate();
     }
 
     return (
@@ -113,7 +151,7 @@ const Swap = (props: SwapProps) => {
                             <SwapInput type="secondary" />
                         </Row>
                         <Row className="swap_content__action" align="middle" justify="center">
-                            <Button type="primary" block onClick={() => { logout(); }}>Unlock Wallet</Button>
+                            <Button type="primary" block onClick={swapButtonAction}>{actionText}</Button>
                         </Row>
                     </Card>
                 </Col>
@@ -126,12 +164,26 @@ const Swap = (props: SwapProps) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>): DispatchToProps => {
     return {
+        getFromToken: () => {
+            dispatch(getFromToken())
+        },
         getSiteColor: () => {
             dispatch(getSiteColor())
         },
+        getToToken: () => {
+            dispatch(getToToken())
+        },
+        setLoading: () => {
+            dispatch(setLoading())
+        },
+        setTokens: (data) => {
+            dispatch(setTokens(data))
+        },
+        setLoaded: () => {
+            dispatch(setLoaded())
+        },
         setSiteTitle: () => {
-            dispatch(
-                setSiteTitle("Kevin Swap"))
+            dispatch(setSiteTitle("Kevin Swap"))
         },
     };
 };
