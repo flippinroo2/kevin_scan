@@ -132,6 +132,9 @@ class DataInput extends Component<FormProps, FormState> {
     if (api?.type) {
       const test = await this.buildTableObjects();
     }
+    if (this.props.api?.type) {
+      const alt = await this.buildTableObjects();
+    }
   }
 
   async buildTableObjects() {
@@ -141,8 +144,8 @@ class DataInput extends Component<FormProps, FormState> {
     const inputForm: any = this.inputForm;
     const form = inputForm.current;
 
-    const startBlock = parseInt(form.getFieldValue('startBlock')) || 0;
-    const endBlock = parseInt(form.getFieldValue('endBlock')) || 0;
+    const startBlock = parseInt(form?.getFieldValue('startBlock')) || 1;
+    const endBlock = parseInt(form?.getFieldValue('endBlock')) || 2;
     const blockDifference = endBlock - startBlock;
 
     // const percentTicker = 100 / blockDifference;

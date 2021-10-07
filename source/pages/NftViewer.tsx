@@ -19,7 +19,6 @@ const NftViewer = (props: NFTProps) => {
     );
 };
 
-
 const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>): DispatchToProps => {
     return {
         setSiteTitle: () => {
