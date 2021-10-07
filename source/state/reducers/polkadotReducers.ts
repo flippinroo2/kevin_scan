@@ -27,7 +27,7 @@ const block = (
     lastFinalizedBlock: 0,
     startBlock: 1,
   },
-  action: any,
+  action: { type: string, payload: any },
 ) => {
   switch (action.type) {
     case SET_GENESIS_BLOCK:
@@ -59,7 +59,7 @@ const block = (
   }
 };
 
-const currency = (state: string = 'DOT', action: any) => {
+const currency = (state: string = 'DOT', action: { type: string, payload: string }) => {
   switch (action.type) {
     case SET_CURRENCY:
       return state;
@@ -70,7 +70,7 @@ const currency = (state: string = 'DOT', action: any) => {
   }
 };
 
-const endpoint = (state: { endpoint: string } = { endpoint: 'wss://rpc.polkadot.io' }, action: any) => {
+const endpoint = (state: string = 'wss://rpc.polkadot.io', action: { type: string, payload: string }) => {
   switch (action.type) {
     case SET_ENDPOINT:
       return state;

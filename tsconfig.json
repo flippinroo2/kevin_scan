@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "noEmit": false,
+    "sourceMap": false,
+    "declarationMap": false,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "composite": false,
+    "outDir": "src",
+    "sourceRoot": "../acala_assignment/source",
     "target": "ESNEXT",
     "module": "esnext",
-    "sourceMap": true,
-    "outDir": "./src",
-    "rootDir": "./source",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -21,17 +25,18 @@
       "esnext"
     ],
     "allowSyntheticDefaultImports": true,
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": false,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true
   },
   "exclude": [
     "node_modules",
-    "temp"
+    "temp",
+    "source/testing"
   ],
+  "compileOnSave": true,
   "include": [
     "source"
-  ],
-  "compileOnSave": true
+  ]
 }

@@ -10,7 +10,7 @@ const {
   GET_ENDPOINT,
 } = apiActions.ACTION_TYPES;
 
-const api = (state: {} = {}, action: any) => {
+const api = (state: {} = {}, action: { type: string, payload: any }) => {
   switch (action.type) {
     case API_ERROR:
       return state;
@@ -23,7 +23,7 @@ const api = (state: {} = {}, action: any) => {
   }
 };
 
-const blockchain = (state: string = 'Polkadot', action: any) => {
+const blockchain = (state: string = 'Polkadot', action: { type: string, payload: string }) => {
   switch (action.type) {
     case GET_BLOCKCHAIN:
       return state;
@@ -34,7 +34,7 @@ const blockchain = (state: string = 'Polkadot', action: any) => {
   }
 };
 
-const endpoint = (state: string = 'wss://rpc.polkadot.io', action: any) => {
+const endpoint = (state: string = 'wss://rpc.polkadot.io', action: { type: string, payload: string }) => {
   switch (action.type) {
     case GET_ENDPOINT:
       return state;

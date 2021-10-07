@@ -1,0 +1,249 @@
+/* Global */
+.hide {
+  display: none;
+}
+
+.show {
+  display: initial;
+}
+
+/* Variables */
+@standard-padding: 0.4rem;
+@border-radius: 0.5rem;
+@box-shadow-inset: inset 0 0 0.2rem #cccccc;
+@box-shadow-outset: 0 0 0.2rem @light-grey;
+
+/* Containers & Wrappers */
+.content_wrapper {
+  margin: auto;
+  max-width: 90%;
+  width: 100%;
+}
+
+/* Header */
+.site_header .ant-page-header-content {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.site_header__menu-toggle {
+  color: @babydoge;
+  // left: -14rem;
+  // position: relative;
+  // top: 1.5rem;
+  font-size: 2.4rem;
+}
+
+.site_header__title {
+  font-size: 1.8rem !important;
+}
+
+.site_header__connect {
+  border-radius: @border-radius;
+}
+
+.site_header > * {
+  align-self: center;
+}
+
+/* Menu */
+.site_menu {
+  background-color: @white;
+  border-top: 0.1rem solid @light-grey;
+  // position: fixed;
+  // z-index: 1;
+}
+
+.site_navigation .anticon {
+  font-size: 1.4rem;
+}
+
+/* Content */
+.blockchain_form,
+.blockchain_table {
+  width: 100%;
+  margin: 2rem auto;
+  max-width: 90%;
+}
+
+/* Block Scanner */
+
+/* Form */
+
+/* Table */
+
+/* Swap */
+.swap_mode {
+  background-color: @white;
+  margin: 2rem auto 0;
+  border-radius: @border-radius;
+}
+
+.swap_mode__exchange,
+.swap_mode__liquidity {
+  padding: @standard-padding 2.5%;
+}
+
+.swap_mode button {
+  border-radius: @border-radius;
+}
+
+.swap_mode__liquidity button {
+  color: #999;
+  border: 0;
+}
+
+.swap_mode, .swap_content {
+  box-shadow: @box-shadow-outset;
+  max-width: 28rem;
+  width: 90%;
+}
+
+.swap_content {
+  margin: 2rem auto;
+}
+
+.swap_content__card {
+  border-radius: 1rem;
+  padding: 0.6rem;
+}
+
+.swap_content__card .ant-card-meta-title {
+  font-size: 1.4rem;
+}
+
+.swap_content__card .ant-card-head {
+  border: 0;
+}
+
+.swap_content__card .ant-card-head {
+  margin-top: 1rem;
+}
+
+.swap_content__card .ant-card-body > div {
+  margin-top: 1.8rem;
+}
+
+.swap_content__settings, .swap_content__time {
+  border: 0;
+}
+
+.swap_content__settings .anticon, .swap_content__time .anticon {
+  font-size: 1.4rem;
+}
+
+.swap_content__settings {
+  margin-right: 0.5rem;
+}
+
+.swap_content__input {
+  border-radius: @border-radius;
+  display: block;
+}
+
+.swap_content__input > div {
+  background-color: @light-grey;
+  border-radius: @border-radius !important;
+  box-shadow: @box-shadow-inset;
+  padding: 0.6rem;
+}
+
+.swap_content__input .ant-typography {
+  color: #aaaaaa;
+}
+
+.swap_content__input .ant-input-number {
+  width: 100%;
+}
+
+.swap_content__input .anticon {
+  color: @grey;
+}
+
+.swap_content__control button {
+  border-radius: @border-radius;
+}
+
+.swap_content__action {
+  margin: 1.8 auto 1rem !important;
+}
+
+.swap_content__action button {
+  border-radius: @border-radius;
+}
+
+.swap_content__token_menu {}
+
+.swap_content__token_menu li{}
+
+.swap_content__token_menu span {}
+
+.swap_content__token_menu img {
+  max-width: 1.4rem;
+}
+
+.swap_content__token_menu a{
+  font-size: 0.8rem;
+    margin-left: 0.4rem;
+}
+
+/* Contract Utilities */
+
+/* NFT Viewer */
+
+/* Temp */
+.under_construction {
+  font-size: 1rem;
+    max-width: 34rem;
+    margin: 2rem auto;
+    width: 80%;
+}
+
+.under_construction__header {text-align: center;}
+
+.under_construction h1 {font-size:2rem; font-weight: 900;}
+
+.under_construction h2 {font-size:1.2rem;}
+
+.under_construction__content {margin-top: 2rem;}
+
+.under_construction__content a {color: blue; font-weight: 700; text-decoration: underline;}
+
+.under_construction__content blockquote {
+  font-size: 0.9rem;
+  max-width: 75%;
+  margin: 1.8rem auto;
+}
+
+.under_construction__content p {font-size:1rem;}
+
+.under_construction__content h3 {margin-top: 3rem; text-align: center;}
+
+/* Footer */
+.site_footer {
+  // background-color: #FFF;
+  text-align: center;
+}
+
+/* Media Queries */
+@media all and (min-width: 768px) {
+  .blockchain_form,
+  .blockchain_table {
+    max-width: 85%;
+  }
+}
+
+@media all and (min-width: 992px) {
+  .blockchain_form,
+  .blockchain_table {
+    max-width: 75%;
+  }
+}
+
+@media all and (min-width: 1200px) {
+  .blockchain_form,
+  .blockchain_table {
+    max-width: 60%;
+  }
+}

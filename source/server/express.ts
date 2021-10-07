@@ -4,8 +4,8 @@ import express from 'express';
 
 config();
 
-const USERNAME: string | undefined = process.env.USERNAME;
-const PASSWORD: string | undefined = process.env.PASSWORD;
+const USERNAME: string = process.env.USERNAME!;
+const PASSWORD: string = process.env.PASSWORD!;
 const ACCESS_STRING: string = `${USERNAME}:${PASSWORD}`;
 
 const APP = express();

@@ -10,7 +10,7 @@ export const getPercentLoaded = () => {
   };
 };
 
-export const setPercentLoaded = (payload: any) => {
+export const setPercentLoaded = (payload: number) => {
   return (dispatch: any) => {
     dispatch({
       type: SET_PERCENT_LOADED,
