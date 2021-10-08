@@ -64,7 +64,7 @@ const Header = (props: HeaderProps) => {
           console.dir(err);
           if (errorCode == 101) {
             console.log("Invalid Username / Password");
-            signup("testUsername", "testPassword", "test@email.com");
+            signup("testUsername", "testPassword", "test@email.com"); // https://docs.moralis.io/moralis-server/users/crypto-login#changing-sign-in-message "user = new Moralis.User(); user.set("username", "username"); etc..."
             break;
           }
           if (errorCode = 202) {
@@ -80,7 +80,7 @@ const Header = (props: HeaderProps) => {
           console.log("logging_out");
           break;
         case "unauthenticated":
-          // const authenticationStatus = authenticate({ onComplete: () => { alert("Authenticated"); }, provider: "walletconnect" }); // Requires Metamask or another Web3 Provider. You can also pass in "walletconnect" to the "provider" argument to use that instead of Metamask.
+          // const authenticationStatus = authenticate({ onComplete: () => { alert("Authenticated"); }, provider: "walletconnect", signingMessage: "MESSAGE_HERE"}); // Requires Metamask or another Web3 Provider. You can also pass in "walletconnect" to the "provider" argument to use that instead of Metamask.
           const loginTest = login("testUsername", "testPassword");
           // const signUpTest = signup("testUsername", "testPassword", "test@email.com");
           break;
