@@ -85,11 +85,17 @@ type FormState = {
 };
 
 class DataInput extends Component<FormProps, FormState> {
-  inputForm: Ref<FormInstance<any>>;
+  // inputForm: any;
+  // inputForm: FormInstance<any>;
+  // inputForm: Ref<FormInstance<any>>;
+  // inputForm: Ref<FormInstance<any>> = React.createRef();
+  inputForm = React.createRef<FormInstance>();
+
+  // inputForm = React.forwardRef<FormInstance>();
 
   constructor(props: FormProps) {
     super(props);
-    this.inputForm = React.createRef();
+    // this.inputForm = React.createRef(); // TODO: Figure out why this is not binding and returning null.
     // TODO: Clean up state bindings. We can use props for most use cases.
     const {
       api,
@@ -116,9 +122,7 @@ class DataInput extends Component<FormProps, FormState> {
     this.unsubscribeToBlocks = this.unsubscribeToBlocks.bind(this);
   }
 
-  componentDidMount() {
-    this.props.setPercentLoaded(75);
-  }
+  componentDidMount() { }
 
   async dropdownListener(event: any) {
     // TODO: Get this working for multi-chain analysis.
@@ -126,22 +130,24 @@ class DataInput extends Component<FormProps, FormState> {
 
   async clickListener(event: any) {
     // console.clear();
-    this.props.setLoading();
+    await this.props.setLoading();
     const clear = await this.props.clearTable();
-    const { api } = this.state;
-    if (api?.type) {
-      const test = await this.buildTableObjects();
+    if (this.state.api?.type) {
+      console.log("state.api");
+      const test = await this.buildTableObjects(this.state.api);
     }
     if (this.props.api?.type) {
-      const alt = await this.buildTableObjects();
+      console.log("props.api");
+      const alt = await this.buildTableObjects(this.props.api);
     }
   }
 
-  async buildTableObjects() {
-    const { api } = this.state;
+  async buildTableObjects(api: any) {
     let columns = [];
 
     const inputForm: any = this.inputForm;
+    console.log(`inputForm =`);
+    console.dir(inputForm);
     const form = inputForm.current;
 
     const startBlock = parseInt(form?.getFieldValue('startBlock')) || 1;
@@ -151,17 +157,17 @@ class DataInput extends Component<FormProps, FormState> {
     // const percentTicker = 100 / blockDifference;
 
     for (let i = 0; i <= blockDifference; i++) {
-      const blockHash = await api?.rpc?.chain?.getBlockHash(startBlock + i)!;
+      const blockData: any = await this.getBlockData(api, startBlock + i);
+      const { events, hash } = blockData;
 
-      const blockEvents = await api?.query?.system?.events?.at(blockHash);
-      const formattedEvents = await this.parseEventData(blockEvents);
-
-      formattedEvents.forEach((item, index) => {
-        this.props.addRow(item);
+      events.forEach((event: any, index: number) => {
+        const { blockNumber, events } = event;
+        // this.props.addRow(events);
+        this.props.addRows(events);
       });
 
       const keys: any = [];
-      Object.keys(formattedEvents[0]).forEach((key) => {
+      Object.keys(events[0]).forEach((key) => {
         switch (key) {
           case 'arguments':
           case 'key':
@@ -181,34 +187,35 @@ class DataInput extends Component<FormProps, FormState> {
       // this.props.setPercentLoaded(percentLoaded);
     }
     this.props.setColumns(columns);
-    this.props.setPercentLoaded(100);
     this.props.setLoaded();
   }
 
-  async getBlockData(blockNumber: number) {
-    const { api } = this.state;
+  async getBlockData(api: any, blockNumber: number) {
     if (api?.type) {
       const hash = await api?.rpc?.chain?.getBlockHash(blockNumber)!;
       const block = await api?.rpc?.chain?.getBlock(hash);
-      // const block = blockData.block.extrincs;
-      const events = await api?.query?.system?.events?.at(hash);
-      const time = await this.getTimeFromHash(hash);
+      const rawEventData = await api?.query?.system?.events?.at(hash);
+      const formattedEventData = await this.parseEventData(api, rawEventData);
+      const time = await this.getTimeFromHash(api, hash);
       return {
         block,
         hash,
-        events,
+        events: formattedEventData,
         time,
       };
     }
   }
 
-  async parseEventData(events: any) {
-    const { api } = this.state;
+  async parseEventData(api: any, events: any) {
     const eventData = [];
     const hash = events.createdAtHash;
     const blockHeader = await api?.rpc?.chain?.getHeader(hash);
-    const blockNumber = await api?.rpc?.chain?.getBlock(hash);
-    const blockTime = await this.getTimeFromHash(hash);
+    const rawBlock = await api?.rpc?.chain?.getBlock(hash);
+    const block = rawBlock.block;
+    const blockExtrinsics = block.extrinsics;
+    const blockNumber = parseInt(block.header.number.toString());
+    const hashFromNumberExample = await api?.rpc?.chain?.getBlockHash(blockNumber);
+    const blockTime = await this.getTimeFromHash(api, hash);
     const eventObject: { blockNumber?: {}, events: {}[] } = {
       blockNumber,
       events: [],
@@ -227,16 +234,17 @@ class DataInput extends Component<FormProps, FormState> {
         eventId: `${blockNumber}-${eventId}`,
         event: `${section}.${method}`,
         extraData: [readable.class, readable.paysFee, readable.weight],
+        key: `${blockNumber}-${eventId}`,
       });
     }
     eventData.push(eventObject);
     return eventData;
   }
 
-  async getTimeFromHash(hash: any) {
+  async getTimeFromHash(api: any, hash: any) {
     // TODO: Get timestamps working properly. (I believe it has to do with the data returned from api.query.timestamp being the current time, not the block / event time.)
     let temp;
-    const { api, lastBlock, lastFinalizedBlock } = this.state;
+    const { lastBlock, lastFinalizedBlock } = this.state;
     if (api?.type) {
       const deriveChain = api.derive?.chain;
       const rpcChain = api.rpc?.chain;
@@ -362,7 +370,7 @@ class DataInput extends Component<FormProps, FormState> {
   );
 
   render() {
-    const { endBlock, endpoint, lastBlock, startBlock } =
+    const { endBlock = 2, endpoint, lastBlock, startBlock = 1 } =
       this.state; // TODO: Add a state for Subscribe that'll be used to stream new data from blockchain.
     const { loading } = this.props;
 
@@ -376,7 +384,8 @@ class DataInput extends Component<FormProps, FormState> {
 
     const formProps = {
       name: 'blockchainData',
-      ref: this.inputForm,
+      // form: this.inputForm,
+      // ref: this.inputForm,
       initialValues: formInitialValues,
       colon: false,
       scrollToFirstError: true,
@@ -384,18 +393,14 @@ class DataInput extends Component<FormProps, FormState> {
       wrapperCol: { span: 16 },
     };
 
-    // const rowGutters = { xs: 0, sm: 0, md: 0, lg: 0 };
     const rowProps = {
-      // align: 'middle',
-      // gutter: rowGutters,
-      // justify: 'center',
       wrap: true,
     };
 
     const columnProps = { xs: 24, sm: 12 };
 
     return (
-      <Form className="blockchain_form" {...formProps}>
+      <Form className="blockchain_form" ref={this.inputForm} {...formProps}>
         <Divider orientation="left">Blockchain Info</Divider>
         {/* <ConfigProvider {...dividerProps}>
           <Divider>Blockchain Info</Divider>
@@ -512,7 +517,7 @@ class DataInput extends Component<FormProps, FormState> {
               trigger="onChange"
               required={true}>
               <InputNumber
-                min={1}
+                min={2}
                 max={Number.MAX_SAFE_INTEGER}
                 style={{ width: '100%' }}
               />
