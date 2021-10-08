@@ -85,17 +85,17 @@ type FormState = {
 };
 
 class DataInput extends Component<FormProps, FormState> {
-  // inputForm: any;
+  inputForm: any;
   // inputForm: FormInstance<any>;
   // inputForm: Ref<FormInstance<any>>;
   // inputForm: Ref<FormInstance<any>> = React.createRef();
-  inputForm = React.createRef<FormInstance>();
+  // inputForm = React.createRef<FormInstance>();
 
   // inputForm = React.forwardRef<FormInstance>();
 
   constructor(props: FormProps) {
     super(props);
-    // this.inputForm = React.createRef(); // TODO: Figure out why this is not binding and returning null.
+    this.inputForm = React.createRef(); // TODO: Figure out why this is not binding and returning null.
     // TODO: Clean up state bindings. We can use props for most use cases.
     const {
       api,
@@ -118,37 +118,37 @@ class DataInput extends Component<FormProps, FormState> {
       startBlock: block?.startBlock,
     };
     this.clickListener = this.clickListener.bind(this);
+    this.formRefFunction = this.formRefFunction.bind(this);
     this.subscribeToBlocks = this.subscribeToBlocks.bind(this);
     this.unsubscribeToBlocks = this.unsubscribeToBlocks.bind(this);
   }
 
   componentDidMount() { }
 
+  formRefFunction = (form: any) => {
+    if (form) {
+      this.inputForm.current = form;
+    }
+  }
+
   async dropdownListener(event: any) {
     // TODO: Get this working for multi-chain analysis.
   }
 
   async clickListener(event: any) {
-    // console.clear();
     await this.props.setLoading();
     const clear = await this.props.clearTable();
-    if (this.state.api?.type) {
-      console.log("state.api");
-      const test = await this.buildTableObjects(this.state.api);
-    }
     if (this.props.api?.type) {
-      console.log("props.api");
-      const alt = await this.buildTableObjects(this.props.api);
+      const test = await this.buildTableObjects(this.props.api);
+    } else {
+      alert("Blockchain API hasn't loaded yet."); // Return errors properly here.
     }
   }
 
   async buildTableObjects(api: any) {
     let columns = [];
 
-    const inputForm: any = this.inputForm;
-    console.log(`inputForm =`);
-    console.dir(inputForm);
-    const form = inputForm.current;
+    const form = this.inputForm.current;
 
     const startBlock = parseInt(form?.getFieldValue('startBlock')) || 1;
     const endBlock = parseInt(form?.getFieldValue('endBlock')) || 2;
@@ -160,10 +160,14 @@ class DataInput extends Component<FormProps, FormState> {
       const blockData: any = await this.getBlockData(api, startBlock + i);
       const { events, hash } = blockData;
 
-      events.forEach((event: any, index: number) => {
+      events.forEach((event: any, key: number) => {
         const { blockNumber, events } = event;
-        // this.props.addRow(events);
-        this.props.addRows(events);
+        this.props.addRow({
+          blockNumber,
+          events,
+          key: blockNumber,
+        });
+        // this.props.addRows(events);
       });
 
       const keys: any = [];
@@ -400,7 +404,7 @@ class DataInput extends Component<FormProps, FormState> {
     const columnProps = { xs: 24, sm: 12 };
 
     return (
-      <Form className="blockchain_form" ref={this.inputForm} {...formProps}>
+      <Form className="blockchain_form" ref={this.formRefFunction} {...formProps}>
         <Divider orientation="left">Blockchain Info</Divider>
         {/* <ConfigProvider {...dividerProps}>
           <Divider>Blockchain Info</Divider>
