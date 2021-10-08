@@ -1,5 +1,8 @@
-const SET_CURRENCY = 'SET_CURRENCY';
-const GET_CURRENCY = 'GET_CURRENCY';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+
+const API_ERROR = 'API_ERROR';
+const GET_API = 'GET_API';
+const SET_API = 'SET_API';
 const SET_GENESIS_BLOCK = 'SET_GENESIS_BLOCK';
 const GET_GENESIS_BLOCK = 'GET_GENESIS_BLOCK';
 const SET_CURRENT_BLOCK = 'SET_CURRENT_BLOCK';
@@ -15,23 +18,31 @@ const GET_BLOCK_HASH = 'GET_BLOCK_HASH';
 const SET_BLOCK_NUMBER = 'SET_BLOCK_NUMBER';
 const GET_BLOCK_NUMBER = 'GET_BLOCK_NUMBER';
 
-export const setCurrency = (payload: any) => {
-  return (dispatch: any) => {
-    dispatch({
-      type: SET_CURRENCY,
-      payload,
-    });
-  };
-};
+function initializeProvider(endpoint: string) {
+  const provider = new WsProvider(endpoint);
+  return ApiPromise.create({ provider });
+}
 
-export const getCurrency = (payload: any) => {
+export function getApi() {
   return (dispatch: any) => {
     dispatch({
-      type: GET_CURRENCY,
-      payload,
+      type: GET_API,
     });
   };
-};
+}
+
+export function setApi(payload: any) {
+  return (dispatch: any) => {
+    return initializeProvider(payload).then(
+      (api) => {
+        dispatch({ type: SET_API, payload: api });
+      },
+      (error) => {
+        dispatch({ type: API_ERROR, payload: error });
+      },
+    );
+  };
+}
 
 export const getEndpoint = (payload: any) => {
   return (dispatch: any) => {
@@ -160,8 +171,9 @@ export const getBlockNumber = (payload: any) => {
 };
 
 export const ACTION_TYPES = {
-  SET_CURRENCY,
-  GET_CURRENCY,
+  API_ERROR,
+  GET_API,
+  SET_API,
   SET_GENESIS_BLOCK,
   GET_GENESIS_BLOCK,
   SET_CURRENT_BLOCK,

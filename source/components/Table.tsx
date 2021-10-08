@@ -144,9 +144,9 @@ class DataDisplay extends Component<TableProps, TableState> {
 }
 
 const mapStateToProps = (state: State): Props => {
-  const { apiReducers = {}, loadingReducers = {}, tableReducers = {} } = state;
+  const { blockchainReducers = {}, loadingReducers = {}, tableReducers = {}, polkadotReducers = {} } = state;
   return {
-    api: apiReducers.api,
+    api: polkadotReducers.api,
     columns: tableReducers.columns,
     loading: loadingReducers.loading,
     percentLoaded: loadingReducers.percentLoaded,

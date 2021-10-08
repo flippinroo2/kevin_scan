@@ -1,8 +1,9 @@
 import { polkadotActions } from '../actions';
 
 const {
-  SET_CURRENCY,
-  GET_CURRENCY,
+  API_ERROR,
+  GET_API,
+  SET_API,
   SET_GENESIS_BLOCK,
   GET_GENESIS_BLOCK,
   SET_CURRENT_BLOCK,
@@ -18,6 +19,19 @@ const {
   SET_BLOCK_NUMBER,
   GET_BLOCK_NUMBER,
 } = polkadotActions.ACTION_TYPES;
+
+const api = (state: {} = {}, action: { type: string, payload: any }) => {
+  switch (action.type) {
+    case API_ERROR:
+      return state;
+    case GET_API:
+      return state;
+    case SET_API:
+      return action.payload;
+    default:
+      return state;
+  }
+};
 
 const block = (
   state: { endBlock: number, genesisBlock: number, lastBlock: number, lastFinalizedBlock: number, startBlock: number } = {
@@ -59,17 +73,6 @@ const block = (
   }
 };
 
-const currency = (state: string = 'DOT', action: { type: string, payload: string }) => {
-  switch (action.type) {
-    case SET_CURRENCY:
-      return state;
-    case GET_CURRENCY:
-      return state;
-    default:
-      return state;
-  }
-};
-
 const endpoint = (state: string = 'wss://rpc.polkadot.io', action: { type: string, payload: string }) => {
   switch (action.type) {
     case SET_ENDPOINT:
@@ -82,7 +85,7 @@ const endpoint = (state: string = 'wss://rpc.polkadot.io', action: { type: strin
 };
 
 export default {
+  api,
   block,
-  currency,
   endpoint,
 };

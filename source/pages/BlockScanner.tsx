@@ -1,16 +1,18 @@
 import { Dispatch, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Props } from '../interfaces/master';
-import { metadataActions } from '../state/actions';
+import { metadataActions, polkadotActions } from '../state/actions';
 import { Form, Table } from '../components';
 
 const { setSiteTitle } = metadataActions;
+const { setApi } = polkadotActions;
 
-interface DispatchToProps { setSiteTitle: Dispatch<any>; };
+interface DispatchToProps { setApi: Dispatch<any>; setSiteTitle: Dispatch<any>; };
 type ScannerProps = Props & DispatchToProps;
 
 const BlockScanner = (props: ScannerProps) => {
   useEffect(() => {
+    // props.setApi();
     props.setSiteTitle("Kevin Scan");
   });
 
@@ -26,9 +28,12 @@ BlockScanner.defaultProps = {};
 
 const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>): DispatchToProps => {
   return {
-    setSiteTitle: () => {
+    setApi: (data) => {
+      dispatch(setApi(data));
+    },
+    setSiteTitle: (data) => {
       dispatch(
-        setSiteTitle("Kevin Scan"))
+        setSiteTitle(data))
     },
   };
 };
