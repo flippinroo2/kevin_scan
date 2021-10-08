@@ -1,7 +1,7 @@
 import React, { Component, Dispatch, Ref } from 'react';
 import { connect } from 'react-redux';
 
-import { tableActions, loadingActions } from '../state/actions';
+import { tableActions, loadingActions, polkadotActions } from '../state/actions';
 import {
   Button,
   Col,
@@ -28,6 +28,7 @@ import {
 
 const { addColumns, addRow, addRows, clearTable, setColumns } = tableActions;
 const { setLoaded, setLoading, setPercentLoaded } = loadingActions;
+const { setApi } = polkadotActions;
 
 enum Blockchains {
   Polkadot = 'wss://rpc.polkadot.io',
@@ -36,14 +37,15 @@ enum Blockchains {
 import { Props, State } from '../interfaces/master';
 
 interface DispatchToProps {
-  addColumns: Dispatch<any>
-  addRow: Dispatch<any>
-  addRows: Dispatch<any>
-  clearTable: Dispatch<void>
-  setColumns: Dispatch<any>
-  setLoaded: Dispatch<void>
-  setLoading: Dispatch<void>
-  setPercentLoaded: Dispatch<number>
+  addColumns: Dispatch<any>;
+  addRow: Dispatch<any>;
+  addRows: Dispatch<any>;
+  clearTable: Dispatch<void>;
+  setApi: Dispatch<any>;
+  setColumns: Dispatch<any>;
+  setLoaded: Dispatch<void>;
+  setLoading: Dispatch<void>;
+  setPercentLoaded: Dispatch<number>;
 };
 type FormProps = Props & DispatchToProps;
 type FormState = {
@@ -123,7 +125,9 @@ class DataInput extends Component<FormProps, FormState> {
     this.unsubscribeToBlocks = this.unsubscribeToBlocks.bind(this);
   }
 
-  componentDidMount() { }
+  componentDidMount() {
+    this.props.setApi(Blockchains.Polkadot);
+  }
 
   formRefFunction = (form: any) => {
     if (form) {
@@ -548,11 +552,11 @@ class DataInput extends Component<FormProps, FormState> {
 }
 
 const mapStateToProps = (state: State): Props => {
-  const { apiReducers = {}, loadingReducers = {} } = state;
+  const { blockchainReducers = {}, loadingReducers = {}, polkadotReducers = {} } = state;
   return {
-    api: apiReducers.api,
-    blockchain: apiReducers.blockchain,
-    endpoint: apiReducers.endpoint,
+    api: polkadotReducers.api,
+    blockchain: blockchainReducers.blockchain,
+    endpoint: blockchainReducers.endpoint,
     loading: loadingReducers.loading,
     percentLoaded: loadingReducers.percentLoaded,
   };
@@ -571,6 +575,9 @@ const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>)
     },
     clearTable: () => {
       dispatch(clearTable());
+    },
+    setApi: (data) => {
+      dispatch(setApi(data))
     },
     setColumns: (data: any) => {
       dispatch(setColumns(data));

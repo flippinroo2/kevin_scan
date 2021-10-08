@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { Dispatch, useEffect } from 'react';
+import { connect, useSelector } from 'react-redux';
+import { User } from '../components';
 import { Props } from '../interfaces/master';
+import { web3Actions } from '../state/actions';
 import { useMoralis, useMoralisCloudFunction, useMoralisWeb3Api, useMoralisWeb3ApiCall } from "react-moralis";
 import { Button, Layout, PageHeader, Typography } from 'antd';
 import {
@@ -9,6 +11,8 @@ import {
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
 
+const { getMoralis, setMoralis, getUser, setUser } = web3Actions;
+
 const menuToggle = (event: any) => {
   const { currentTarget } = event;
   // TODO: Make the transition smooth on the menu hide / show. Also, swap the icon on click.
@@ -16,36 +20,40 @@ const menuToggle = (event: any) => {
   menu.hidden = !menu.hidden;
 }
 
-type HeaderProps = Props & { className: string; }
+interface DispatchToProps { getMoralis: any; getUser: any; setMoralis: Dispatch<any>; setUser: Dispatch<any>; };
+type HeaderProps = Props & { className: string; } & DispatchToProps;
 
 const Header = (props: HeaderProps) => {
   const state: any = useSelector((state) => { return state; });
 
-  const moralis = state.web3Reducers.moralis;
   const title = state.metadataReducers.title;
+
+  const { auth, authenticate, enableWeb3, isAuthenticated, isAuthenticating, isWeb3Enabled, isWeb3EnableLoading, login, logout, Moralis, signup, user, web3, web3EnableError } = useMoralis();
+
+  const moralis = state.web3Reducers.moralis;
+  const { on, onConnect, onDisconnect, switchNetwork, } = moralis;
 
   const { className } = props;
 
   const { Header } = Layout;
   const { Title } = Typography;
 
-  const { auth, authenticate, enableWeb3, isAuthenticated, isAuthenticating, isWeb3Enabled, isWeb3EnableLoading, login, logout, Moralis, signup, user, web3, web3EnableError } = useMoralis();
-
-  useEffect(() => { });
+  useEffect(() => {
+    console.log("Header - useEffect()");
+    if (moralis) {
+      props.setMoralis(Moralis);
+    }
+    if (user) {
+      props.setUser(user);
+    }
+  });
 
   const connectWeb3 = async () => {
     // const moralis: any = Moralis; // Did this to avoid error with the "Plugins" directive. (ALSO, plugins may not be enabled on the older version I'm using >.<)
     const moralisWeb3 = useMoralisWeb3Api();
     try {
       const web3Enabled = await enableWeb3();
-      const web3Installed = await moralis.ensureWeb3IsInstalled();
-      if (web3Installed) {
-        console.log("BREAK");
-        const test1 = await moralis.enable();
-        const test2 = await moralis.getWeb3Provider();
-        const test3 = await moralis.authenticate();
-        console.log("BREAK");
-      }
+
       var err: any;
       var errorCode: number;
       switch (auth.state) {
@@ -80,6 +88,18 @@ const Header = (props: HeaderProps) => {
           err = auth.error;
           console.log("default");
       }
+      // const web3Installed = await moralis.ensureWeb3IsInstalled();
+      // if (web3Installed) {
+      //   console.log("BREAK");
+      //   const test1 = await moralis.enable();
+      //   const test2 = await moralis.getWeb3Provider();
+      //   const test3 = await moralis.authenticate();
+      //   console.log("BREAK");
+      // }
+      console.dir(user);
+      // console.dir(await moralis.Session.current());
+      console.dir(moralis.User); // loginOrSignup() seems useful
+      // console.dir(moralis.AnonymousUtils);
     } catch (err: any) {
       alert(err.message);
     }
@@ -97,7 +117,11 @@ const Header = (props: HeaderProps) => {
         fallback="data:image/png;base64,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"
       /> */}
       <Title code className="site_header__title">{title}</Title>
-      <Button type="primary" className="site_header__connect" onClick={connectWeb3}>Connect</Button>
+      {user ?
+        <User />
+        :
+        <Button type="primary" className="site_header__connect" onClick={connectWeb3}>Connect</Button>
+      }
     </PageHeader>
   );
 };
@@ -105,5 +129,21 @@ const Header = (props: HeaderProps) => {
 Header.defaultProps = {
   className: 'site_header',
 };
+const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>): DispatchToProps => {
+  return {
+    getMoralis: () => {
+      dispatch(getMoralis());
+    },
+    setMoralis: (data) => {
+      dispatch(setMoralis(data));
+    },
+    getUser: () => {
+      dispatch(getUser());
+    },
+    setUser: (data) => {
+      dispatch(setUser(data));
+    }
+  };
+};
 
-export default Header;
+export default connect<any, any, any>(null, mapDispatchToProps)(Header);

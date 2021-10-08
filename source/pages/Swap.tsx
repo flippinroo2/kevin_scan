@@ -24,11 +24,9 @@ const SwapConfiguration = () => {
     const { logout, user } = useMoralis();
 
     const settingsClick = () => {
-        console.log("settingsClick()");
         console.log(user);
     }
     const timeClick = () => {
-        console.log("timeClick()");
         logout();
     }
 
@@ -57,7 +55,7 @@ const Swap = (props: SwapProps) => {
     // const authenticationStatus = authenticate();
 
     useEffect(() => {
-        props.setSiteTitle("Kevin Swap");
+        props.setSiteTitle("Loy Swap");
         // props.setLoading();
         color = props.getSiteColor();
         try {
