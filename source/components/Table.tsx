@@ -42,6 +42,7 @@ class DataDisplay extends Component<TableProps, TableState> {
 
   populateEventFilter = (items: object[]) => {
     items.map((item: any) => {
+      // TODO: Make this dynamic instead of hard coding the filter to use "system.ExtrinsicSuccess"
       if (item.key == 'event') {
         item.filters = [
           {
@@ -61,6 +62,9 @@ class DataDisplay extends Component<TableProps, TableState> {
 
   populateTable() {
     const { loading, rows } = this.props;
+    // [
+    //   { blockNumber: '', children: [], key: 0 }
+    // ]
     // TODO: Dynamic column creation
     const mainColumns = [
       {
@@ -104,13 +108,12 @@ class DataDisplay extends Component<TableProps, TableState> {
         columns={mainColumns}
         dataSource={rows}
         expandable={{
-          childrenColumnName: 'children',
-          expandedRowRender: (record: any, index) => {
+          expandedRowRender: (record: any, key: number) => {
             return (
               <Table
-                key={index}
+                key={key}
                 columns={secondaryColumns}
-                dataSource={record}
+                dataSource={record.events}
                 pagination={false}
               />
             );
@@ -122,11 +125,8 @@ class DataDisplay extends Component<TableProps, TableState> {
             return <PlusSquareFilled onClick={(e) => onExpand(record, e)} />;
           },
           expandRowByClick: true,
-          rowExpandable: (record) => {
-            if (record.length > 1) {
-              return true;
-            }
-            return false;
+          rowExpandable: (record: any) => {
+            return record.events ? true : false;
           },
         }}
         loading={{ spinning: loading }}
