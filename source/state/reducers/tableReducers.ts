@@ -22,11 +22,11 @@ const rows = (state: {}[] = [], action: any) => {
     case ADD_ROW:
       const key = `${++rowId}`;
       action.payload.key = key;
-      return { rows: [...state, action.payload] };
+      return [...state, action.payload];
     case ADD_ROWS:
-      return { rows: [...state, action.payload] };
+      return [...state, action.payload];
     case CLEAR_TABLE:
-      return { rows: [] };
+      return [];
     default:
       return state;
   }

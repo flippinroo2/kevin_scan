@@ -37,7 +37,6 @@ class DataDisplay extends Component<TableProps, TableState> {
   }
 
   componentDidMount() {
-    this.props.setPercentLoaded(100);
     this.props.setLoaded();
   }
 
@@ -111,7 +110,7 @@ class DataDisplay extends Component<TableProps, TableState> {
               <Table
                 key={index}
                 columns={secondaryColumns}
-                dataSource={record.events}
+                dataSource={record}
                 pagination={false}
               />
             );
@@ -124,7 +123,7 @@ class DataDisplay extends Component<TableProps, TableState> {
           },
           expandRowByClick: true,
           rowExpandable: (record) => {
-            if (record.events) {
+            if (record.length > 1) {
               return true;
             }
             return false;
