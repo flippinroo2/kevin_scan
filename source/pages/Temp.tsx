@@ -1,6 +1,6 @@
 import { Dispatch, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Props } from '../interfaces/master';
+import { Props } from '../interfaces';
 import { metadataActions } from '../state/actions';
 
 const { setSiteTitle } = metadataActions;
@@ -35,7 +35,8 @@ const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>)
   return {
     setSiteTitle: (data: string) => {
       dispatch(
-        setSiteTitle(data))
+        setSiteTitle(data)
+      )
     },
   };
 };

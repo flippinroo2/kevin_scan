@@ -34,7 +34,7 @@ enum Blockchains {
   Polkadot = 'wss://rpc.polkadot.io',
 }
 
-import { Props, State } from '../interfaces/master';
+import { Props, State } from '../interfaces';
 
 interface DispatchToProps {
   addColumns: Dispatch<any>;

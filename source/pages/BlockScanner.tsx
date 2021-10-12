@@ -1,6 +1,6 @@
 import { Dispatch, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Props } from '../interfaces/master';
+import { Props } from '../interfaces';
 import { metadataActions, polkadotActions } from '../state/actions';
 import { Form, Table } from '../components';
 

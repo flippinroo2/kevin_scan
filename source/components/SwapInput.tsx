@@ -1,6 +1,6 @@
 import { Dispatch, useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { Props } from '../interfaces/master';
+import { Props } from '../interfaces';
 import { swapActions, loadingActions } from '../state/actions';
 import { Col, Dropdown, Input, InputNumber, Menu, Row, Typography } from 'antd';
 import {

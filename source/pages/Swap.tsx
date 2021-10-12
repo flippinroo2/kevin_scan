@@ -1,12 +1,11 @@
 import { Dispatch, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Props } from '../interfaces/master';
+import { Props } from '../interfaces';
 import { loadingActions, metadataActions, swapActions } from '../state/actions';
 import { useMoralis, useMoralisCloudFunction, useMoralisWeb3Api, useMoralisWeb3ApiCall } from "react-moralis";
 import { Button, Image, Input, Skeleton, Statistic, Card, Row, Col, Table, Typography } from 'antd';
 import {
     ArrowDownOutlined,
-    ClockCircleOutlined,
     ClockCircleTwoTone,
     CompassTwoTone,
     DownCircleOutlined,
@@ -38,7 +37,7 @@ const SwapConfiguration = () => {
     );
 }
 
-interface DispatchToProps { getFromToken: any; getSiteColor: any; getToToken: any; setLoading: any; setLoaded: any; setSiteTitle: Dispatch<any>; setTokens: Dispatch<any>; };
+interface DispatchToProps { getFromToken: any; getSiteColor: any; getToToken: any; setLoading: any; setLoaded: any; setSiteTitle: any; setTokens: Dispatch<any>; };
 type SwapProps = Props & DispatchToProps;
 
 const Swap = (props: SwapProps) => {
@@ -55,7 +54,7 @@ const Swap = (props: SwapProps) => {
     // const authenticationStatus = authenticate();
 
     useEffect(() => {
-        props.setSiteTitle("Loy Swap");
+        props.setSiteTitle();
         // props.setLoading();
         color = props.getSiteColor();
         try {
@@ -181,7 +180,7 @@ const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>)
             dispatch(setLoaded())
         },
         setSiteTitle: () => {
-            dispatch(setSiteTitle("Kevin Swap"))
+            dispatch(setSiteTitle("Loy Swap"))
         },
     };
 };

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "This is a frontend application that I will include various features for interacting with multiple blockchains.",
   "main": "index.js",
-  "license": "MIT",
+  "license": "GNU GPLv3",
   "type": "module",
   "dependencies": {
     "@polkadot/api": "^6.1.1",
