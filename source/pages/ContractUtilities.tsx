@@ -1,6 +1,6 @@
 import { Dispatch, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Props } from '../interfaces/master';
+import { Props } from '../interfaces';
 import { metadataActions } from '../state/actions';
 import { Contract } from '../components';
 
