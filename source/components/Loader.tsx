@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Layout, Progress, Typography } from 'antd';
 
-import { Props, State } from '../interfaces/master';
+import { Props, State } from '../interfaces';
 
 type LoaderProps = Props;
 type LoaderState = { percentLoaded?: number };

@@ -1,6 +1,6 @@
 import { Dispatch, useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { Props } from '../interfaces/master';
+import { Props } from '../interfaces';
 import { web3Actions } from '../state/actions';
 import { Menu, Dropdown, Button, message, Space, Tooltip } from 'antd';
 import {
@@ -17,7 +17,7 @@ const User = (props: any) => {
   const { moralis, user }: any = state.web3Reducers;
   // link() and unlink() are for merging addresses from different chains to one user.
   const { attributes, authenticated, getEmail, getSessionToken, getUsername, isCurrent, login, signUp, verifyPassword, id } = user;
-  // const { ACL, Cloud, CLP, Config, CoreManager, dumpLocalDatastore, initalize, Link, LiveQuery, LocalDatastore, Moralis, Plugins, Query, Relation, Role, Schema, Session, setAsyncStorage, Storage, UI, Units, Web3, Web3API, addNetwork, authenticate, cleanup, enable, ensureWeb3IsInstalled, getAllERC20, getChainId, getNFTs, getSigningData, getTransactioins, getWeb3Provider, initPlugins, transfer, unlink } = moralis;
+  const { ACL, Cloud, CLP, Config, CoreManager, dumpLocalDatastore, initalize, Link, LiveQuery, LocalDatastore, Moralis, Plugins, Query, Relation, Role, Schema, Session, setAsyncStorage, Storage, UI, Units, Web3, Web3API, addNetwork, authenticate, cleanup, enable, ensureWeb3IsInstalled, getAllERC20, getChainId, getNFTs, getSigningData, getTransactioins, getWeb3Provider, initPlugins, transfer, unlink } = moralis;
   const MoralisUser = moralis.User;
 
   // authenticate();

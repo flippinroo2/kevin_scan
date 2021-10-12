@@ -8,7 +8,7 @@ import { loadingActions } from '../state/actions';
 
 const { setLoaded, setLoading, setPercentLoaded } = loadingActions;
 
-import { Props, State } from '../interfaces/master';
+import { Props, State } from '../interfaces';
 
 interface DispatchToProps { setLoaded: Dispatch<void>, setLoading: Dispatch<void>; setPercentLoaded: Dispatch<number> };
 type TableProps = Props & DispatchToProps;

@@ -7,7 +7,7 @@ import {
   Switch,
 } from 'react-router-dom';
 
-import { Props, State } from './interfaces/master';
+import { Props, State } from './interfaces';
 
 import { blockchainActions, loadingActions, metadataActions, web3Actions } from './state/actions';
 
@@ -18,8 +18,6 @@ import { Footer, Header, Loader, Navigation } from './components';
 import metadataReducers from './state/reducers/metadataReducers';
 
 const { setLoaded } = loadingActions;
-
-
 
 // const context = useContext(ContractProvider);
 // const [contracts, setContracts] = useState([]);
@@ -71,7 +69,7 @@ class App extends Component<AppProps, AppState> {
               ) : (
                 <Switch>
                   <Route path="/" exact>
-                    <Temp title="Kevin Scan" />
+                    <Temp title="Homepage" />
                   </ Route>
                   <Route path="/kevin_scan" exact>
                     <BlockScanner />
@@ -114,4 +112,4 @@ const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>)
   };
 };
 
-export default connect<any, any, any>(mapStateToProps, mapDispatchToProps)(App);
+export default connect<Props, any, any>(mapStateToProps, mapDispatchToProps)(App);

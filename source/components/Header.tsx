@@ -1,7 +1,7 @@
 import { Dispatch, useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { User } from '../components';
-import { Props } from '../interfaces/master';
+import { Props } from '../interfaces';
 import { web3Actions } from '../state/actions';
 import { useMoralis, useMoralisCloudFunction, useMoralisWeb3Api, useMoralisWeb3ApiCall } from "react-moralis";
 import { Button, Layout, PageHeader, Typography } from 'antd';
