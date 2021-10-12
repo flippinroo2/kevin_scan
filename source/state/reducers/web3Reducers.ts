@@ -1,8 +1,12 @@
 import { web3Actions } from '../actions';
 
 const {
+  AUTHENTICATE_MORALIS,
   GET_MORALIS,
+  LOGIN_MORALIS,
+  LOGOUT_MORALIS,
   SET_MORALIS,
+  SIGNUP_MORALIS,
   MORALIS_ERROR,
   GET_ETHERS,
   SET_ETHERS,
@@ -14,8 +18,16 @@ const {
 
 const moralis = (state: {} = {}, action: { type: string, payload: any }) => {
   switch (action.type) {
+    case AUTHENTICATE_MORALIS:
+      return action.payload;
     case GET_MORALIS:
       return state;
+    case LOGIN_MORALIS:
+      return action.payload;
+    case LOGOUT_MORALIS:
+      return action.payload;
+    case SIGNUP_MORALIS:
+      return action.payload;
     case SET_MORALIS:
       return action.payload;
     default:

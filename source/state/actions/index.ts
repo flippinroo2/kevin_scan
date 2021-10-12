@@ -1,4 +1,4 @@
-export * as apiActions from './apiActions';
+export * as blockchainActions from './blockchainActions';
 export * as contractActions from './contractActions';
 export * as loadingActions from './loadingActions';
 export * as metadataActions from './metadataActions';

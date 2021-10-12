@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import apiReducers from './apiReducers';
+import blockchainReducers from './blockchainReducers';
 import contractReducers from './contractReducers';
 import loadingReducers from './loadingReducers';
 import metadataReducers from './metadataReducers';
@@ -11,7 +11,7 @@ import tableReducers from './tableReducers';
 import web3Reducers from './web3Reducers';
 
 const reducers = {
-  apiReducers: combineReducers(apiReducers),
+  blockchainReducers: combineReducers(blockchainReducers),
   contractReducers: combineReducers(contractReducers),
   loadingReducers: combineReducers(loadingReducers),
   metadataReducers: combineReducers(metadataReducers),

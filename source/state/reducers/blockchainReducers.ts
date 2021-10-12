@@ -1,27 +1,13 @@
-import { apiActions } from '../actions';
+import { blockchainActions } from '../actions';
 
 const {
-  API_ERROR,
-  GET_API,
-  SET_API,
   SET_BLOCKCHAIN,
   GET_BLOCKCHAIN,
+  SET_CURRENCY,
+  GET_CURRENCY,
   SET_ENDPOINT,
   GET_ENDPOINT,
-} = apiActions.ACTION_TYPES;
-
-const api = (state: {} = {}, action: { type: string, payload: any }) => {
-  switch (action.type) {
-    case API_ERROR:
-      return state;
-    case GET_API:
-      return state;
-    case SET_API:
-      return action.payload;
-    default:
-      return state;
-  }
-};
+} = blockchainActions.ACTION_TYPES;
 
 const blockchain = (state: string = 'Polkadot', action: { type: string, payload: string }) => {
   switch (action.type) {
@@ -29,6 +15,17 @@ const blockchain = (state: string = 'Polkadot', action: { type: string, payload:
       return state;
     case SET_BLOCKCHAIN:
       return action.payload;
+    default:
+      return state;
+  }
+};
+
+const currency = (state: string = 'DOT', action: { type: string, payload: string }) => {
+  switch (action.type) {
+    case SET_CURRENCY:
+      return state;
+    case GET_CURRENCY:
+      return state;
     default:
       return state;
   }
@@ -46,7 +43,7 @@ const endpoint = (state: string = 'wss://rpc.polkadot.io', action: { type: strin
 };
 
 export default {
-  api,
   blockchain,
+  currency,
   endpoint,
 };

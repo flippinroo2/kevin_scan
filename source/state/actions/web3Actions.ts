@@ -1,29 +1,9 @@
-import {
-  // CLP,
-  // Cloud,
-  // Config,
-  // CoreManager,
-  // Dot,
-  // FacebookUtils,
-  // File,
-  // LiveQuery,
-  Moralis,
-  // Plugins,
-  // Polygon,
-  // Role,
-  // Session,
-  // Storage,
-  // UI,
-  // User,
-  // Web3API,
-  // authenticate,
-  // initialize,
-  // secret,
-  // serverURL,
-} from 'moralis';
-
+const AUTHENTICATE_MORALIS = "AUTHENTICATE_MORALIS";
 const GET_MORALIS = "GET_MORALIS";
 const SET_MORALIS = "SET_MORALIS";
+const LOGIN_MORALIS = "LOGIN_MORALIS";
+const LOGOUT_MORALIS = "LOGOUT_MORALIS";
+const SIGNUP_MORALIS = "SIGNUP_MORALIS";
 const MORALIS_ERROR = "MORALIS_ERROR";
 const GET_ETHERS = "GET_ETHERS";
 const SET_ETHERS = "SET_ETHERS";
@@ -42,11 +22,43 @@ export function getMoralis() {
   };
 }
 
-export function setMoralis() {
+export function authenticateMoralis() {
+  return (dispatch: any) => {
+    dispatch({
+      type: AUTHENTICATE_MORALIS,
+    });
+  };
+}
+
+export function loginMoralis() {
+  return (dispatch: any) => {
+    dispatch({
+      type: LOGIN_MORALIS,
+    });
+  };
+}
+
+export function logoutMoralis() {
+  return (dispatch: any) => {
+    dispatch({
+      type: LOGOUT_MORALIS,
+    });
+  };
+}
+
+export function signUpMoralis() {
+  return (dispatch: any) => {
+    dispatch({
+      type: SIGNUP_MORALIS,
+    });
+  };
+}
+
+export function setMoralis(data: any) {
   return (dispatch: any) => {
     dispatch({
       type: SET_MORALIS,
-      payload: Moralis
+      payload: data
     });
   };
 }
@@ -69,8 +81,12 @@ export function setUser(payload: any) {
 }
 
 export const ACTION_TYPES = {
+  AUTHENTICATE_MORALIS,
   GET_MORALIS,
   SET_MORALIS,
+  LOGIN_MORALIS,
+  LOGOUT_MORALIS,
+  SIGNUP_MORALIS,
   MORALIS_ERROR,
   GET_ETHERS,
   SET_ETHERS,

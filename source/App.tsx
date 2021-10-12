@@ -9,32 +9,26 @@ import {
 
 import { Props, State } from './interfaces/master';
 
-import { apiActions, loadingActions, metadataActions, web3Actions } from './state/actions';
+import { blockchainActions, loadingActions, metadataActions, web3Actions } from './state/actions';
 
 import { Layout } from 'antd';
 
 import { BlockScanner, ContractUtilities, NftViewer, Swap, Temp } from './pages';
 import { Footer, Header, Loader, Navigation } from './components';
+import metadataReducers from './state/reducers/metadataReducers';
 
-const { setApi } = apiActions;
 const { setLoaded } = loadingActions;
-const { getMoralis, setMoralis } = web3Actions;
 
-interface DispatchToProps { setApi: Dispatch<any>; setLoaded: any; getMoralis: any; setMoralis: any; };
+interface DispatchToProps { setLoaded: any; };
 type AppProps = Props & DispatchToProps;
-type AppState = { api?: {}, blockchain?: string, color?: string, currency?: string, endpoint?: string, loading?: boolean, moralis?: {}, percentLoaded?: number };
+type AppState = { color?: string, loading?: boolean, };
 
 class App extends Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
-    // TODO: Clean up state bindings. We can use props for most use cases.
-    const { api, blockchain, color, currency, endpoint, loading, moralis, percentLoaded } = props;
-    this.state = { api, blockchain, color, currency, endpoint, loading, moralis, percentLoaded };
   }
 
   componentDidMount() {
-    this.props.setApi(this.state.endpoint);
-    this.props.setMoralis();
     this.props.setLoaded();
   }
 
@@ -91,31 +85,17 @@ class App extends Component<AppProps, AppState> {
 }
 
 const mapStateToProps = (state: State): Props => {
-  const { apiReducers = {}, loadingReducers = {}, polkadotReducers = {}, web3Reducers = {}, } = state;
+  const { metadataReducers = {}, loadingReducers = {} } = state;
   return {
-    api: apiReducers.api,
-    blockchain: apiReducers.blockchain,
-    currency: polkadotReducers.currency,
-    endpoint: polkadotReducers.endpoint,
+    color: metadataReducers.color,
     loading: loadingReducers.loading,
-    moralis: web3Reducers.moralis,
-    percentLoaded: loadingReducers.percentLoaded,
   };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch<(data: string | number) => void>): DispatchToProps => {
   return {
-    setApi: (data: string) => {
-      dispatch(setApi(data));
-    },
     setLoaded: () => {
       dispatch(setLoaded());
-    },
-    getMoralis: () => {
-      dispatch(getMoralis());
-    },
-    setMoralis: () => {
-      dispatch(setMoralis());
     },
   };
 };
